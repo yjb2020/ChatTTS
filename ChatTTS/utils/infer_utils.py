@@ -48,7 +48,7 @@ class CustomRepetitionPenaltyLogitsProcessor():
 def count_invalid_characters(s):
     
     s = re.sub(r'\[uv_break\]|\[laugh\]|\[lbreak\]', '', s)
-    pattern = re.compile(r'[^\u4e00-\u9fffA-Za-z，。,\. ]')
+    pattern = re.compile(r'[^\u4e00-\u9fffA-Za-z，。、,\. ]')
     non_alphabetic_chinese_chars = pattern.findall(s)
     return set(non_alphabetic_chinese_chars)
 
@@ -64,3 +64,78 @@ def detect_language(sentence):
         return "zh"
     else:
         return "en"
+    
+    
+character_map = {
+    '：': '，',
+    '；': '，',
+    '！': '。',
+    '（': '，',
+    '）': '，',
+    '【': '，',
+    '】': '，',
+    '『': '，',
+    '』': '，',
+    '「': '，',
+    '」': '，',
+    '《': '，',
+    '》': '，',
+    '－': '，',
+    '‘': '',
+    '“': '',
+    '’': '',
+    '”': '',
+    ':': ',',
+    ';': ',',
+    '!': '.',
+    '(': ',',
+    ')': ',',
+    '[': ',',
+    ']': ',',
+    '>': ',',
+    '<': ',',
+    '-': ',',
+}
+
+halfwidth_2_fullwidth_map = {
+        '!': '！',
+        '"': '“',
+        "'": '‘',
+        '#': '＃',
+        '$': '＄',
+        '%': '％',
+        '&': '＆',
+        '(': '（',
+        ')': '）',
+        ',': '，',
+        '-': '－',
+        '*': '＊',
+        '+': '＋',
+        '.': '。',
+        '/': '／',
+        ':': '：',
+        ';': '；',
+        '<': '＜',
+        '=': '＝',
+        '>': '＞',
+        '?': '？',
+        '@': '＠',
+        # '[': '［',
+        '\\': '＼',
+        # ']': '］',
+        '^': '＾',
+        # '_': '＿',
+        '`': '｀',
+        '{': '｛',
+        '|': '｜',
+        '}': '｝',
+        '~': '～'
+    }
+
+def apply_half2full_map(text):
+    translation_table = str.maketrans(halfwidth_2_fullwidth_map)
+    return text.translate(translation_table)
+
+def apply_character_map(text):
+    translation_table = str.maketrans(character_map)
+    return text.translate(translation_table)
